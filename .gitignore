@@ -1,0 +1,7 @@
+node_modules
+vendor
+package-lock.json
+pnpm-lock.yaml
+yaml.lock
+.env
+.vscode

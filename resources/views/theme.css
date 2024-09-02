@@ -1,0 +1,32 @@
+:root {
+	/* Barvy */
+	--background-color: #111319;
+	--primary-color: #0090e7;
+	--secondary-color: #f8f9fa;
+	--text-color: #f8f9fa;
+	--sideanavbar-color: #191c24;
+	--heading-color: #f8f9fa;
+	--border-color: #343a40;
+}
+
+/* available variables
+    --primary-color - barva pro hlavní prvky (tlačítka, odkazy, ...)
+    --secondary-color - barva pro vedlejší prvky (pozadí, ohraničení, ...)
+    --background-color  - barva pozadí
+    --text-color - barva textu
+    --heading-color - barva nadpisů
+    --border-color - barva ohraničení
+    --font-family - písmo
+    --font-size-base - základní velikost písma
+    --font-size-large - velká velikost písma
+    --font-size-small - malá velikost písma 
+    --line-height - řádkování
+    --padding-base - mezery
+    --margin-base - okraje
+    --border-radius - zaoblení
+    --box-shadow - stín
+    --z-index-header - z-index pro hlavičku
+    --z-index-modal - z-index pro modální okna 
+    --z-index-dropdown - z-index pro dropdowny 
+    --transition-speed - rychlost animací
+*/
