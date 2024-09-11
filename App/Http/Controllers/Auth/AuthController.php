@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Base\JWT;
 use App\Base\Pterodactyl;
+use Exception;
 
 Pterodactyl::env(env['PTERODACTYL_API_KEY'], env['PTERODACTYL_API_URL']);
+
 
 class AuthController
 {
@@ -32,6 +34,11 @@ class AuthController
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $logins = curl_exec($ch);
         curl_close($ch);
+        if (isset(json_decode($logins, true)['error'])) {
+            return [
+                "error" => "Invalid code!"
+            ];
+        }
         # get user info
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://discord.com/api/users/@me');
@@ -59,8 +66,9 @@ class AuthController
     }
     public static function login()
     {
+        $grav_default = env["WEBSITE"] . "/favicon.png";
+        $grav_size = 160;
         $data = $_POST;
-        var_dump($data);
         if (!$data) {
             return [
                 "error" => "No data provided!"
@@ -72,6 +80,11 @@ class AuthController
             ];
         }
         $user = self::checkOauth2($data['code']);
+        if (isset($user['error'])) {
+            return [
+                "error" => "Invalid code!"
+            ];
+        }
         if ($user['user']['verified'] == false) {
             return [
                 "error" => "You must verify your email!"
@@ -88,7 +101,7 @@ class AuthController
                 "error" => "Error creating user!"
             ];
         }
-        db->unsafeQuery("INSERT INTO users (username, email, avatar, access_token, refresh_token, pterodactyl) VALUES ('" . $user['user']['global_name'] . "', '" . $user['user']['email'] . "', '" . $user['user']['avatar'] . "', '" . $user['logins']['access_token'] . "', '" . $user['logins']['refresh_token'] . "', '" . $pterodactyl['attributes']['id'] . "') ON DUPLICATE KEY UPDATE username='" . $user['user']['global_name'] . "', email='" . $user['user']['email'] . "', avatar='" . $user['user']['avatar'] . "', access_token='" . $user['logins']['access_token'] . "', refresh_token='" . $user['logins']['refresh_token'] . "', pterodactyl='" . $pterodactyl['attributes']['id'] . "'");
+        db->unsafeQuery("INSERT INTO users (username, email, avatar, access_token, refresh_token, pterodactyl) VALUES ('" . $user['user']['global_name'] . "', '" . $user['user']['email'] . "', '" . "https://www.gravatar.com/avatar/" . hash("sha256", strtolower(trim($user['user']['email']))) . "?d=" . urlencode($grav_default) . "&s=" . $grav_size . "', '" . $user['logins']['access_token'] . "', '" . $user['logins']['refresh_token'] . "', '" . $pterodactyl['attributes']['id'] . "') ON DUPLICATE KEY UPDATE username='" . $user['user']['global_name'] . "', email='" . $user['user']['email'] . "', avatar='" . "https://www.gravatar.com/avatar/" . hash("sha256", strtolower(trim($user['user']['email']))) . "?d=" . urlencode($grav_default) . "&s=" . $grav_size . "', access_token='" . $user['logins']['access_token'] . "', refresh_token='" . $user['logins']['refresh_token'] . "', pterodactyl='" . $pterodactyl['attributes']['id'] . "'");
         $res = db->unsafeQuery("SELECT * FROM users WHERE email='" . $user['user']['email'] . "'");
         if (!$res) {
             return [
@@ -98,33 +111,57 @@ class AuthController
         $token = JWT::encode([
             "username" => $user['user']['global_name'],
             "email" => $user['user']['email'],
-            "avatar" => $user['user']['avatar'],
+            "avatar" => "https://www.gravatar.com/avatar/" . hash("sha256", strtolower(trim($user['user']['email']))) . "?d=" . urlencode($grav_default) . "&s=" . $grav_size,
             "id" => $res[0]['id'],
             "pterodactyl" => $pterodactyl['attributes']['id']
         ]);
         // name, value, expire, path, domain, secure, httponly
-        setcookie('Authorization', $token, time() + 60 * 15, '/', '', false, true);
+        setcookie('Authorization', $token, time() + 60 * 60 * 24 * 30, '/', '', false, true);
         return [
             "success" => "You are logged in!"
         ];
     }
     public static function index()
     {
-        $authorization = $_COOKIE['Authorization'];
+        $authorization = $_COOKIE['Authorization'] ?? null;
         if (!$authorization) {
             return [
-                "error" => "No authorization token found!"
+                "error" => "No token provided!"
             ];
         }
         $token = JWT::verify($authorization);
         if (isset($token['error'])) {
             return [
-                "error" => "Invalid token! "
+                "error" => "Invalid token!"
             ];
         }
+        $user = $token;
+        $db = db->unsafeQuery("SELECT * FROM users WHERE id='" . $user['id'] . "'");
+        $default = [
+            "cpu" => db->unsafeQuery("SELECT * FROM config WHERE name='cpu'")[0]['value'],
+            "ram" => db->unsafeQuery("SELECT * FROM config WHERE name='ram'")[0]['value'],
+            "disk" => db->unsafeQuery("SELECT * FROM config WHERE name='disk'")[0]['value'],
+            "slots" => db->unsafeQuery("SELECT * FROM config WHERE name='slots'")[0]['value'],
+            "database" => db->unsafeQuery("SELECT * FROM config WHERE name='database'")[0]['value'],
+            "ports" => db->unsafeQuery("SELECT * FROM config WHERE name='ports'")[0]['value'],
+        ];
+        if (!$db) {
+            return [
+                "error" => "User not found!"
+            ];
+        }
+        $dbUser = $db[0];
+        $dbUser['cpu'] = $dbUser['cpu'] + $default['cpu'];
+        $dbUser['ram'] = $dbUser['ram'] + $default['ram'];
+        $dbUser['disk'] = $dbUser['disk'] + $default['disk'];
+        $dbUser['slots'] = $dbUser['slots'] + $default['slots'];
+        $dbUser['database'] = $dbUser['database'] + $default['database'];
+        $dbUser['ports'] = $dbUser['ports'] + $default['ports'];
+        $user = array_merge($user, $dbUser);
+        // sleep(2);
         return [
             "success" => "You are logged in!",
-            "user" => $token
+            "user" => $user
         ];
     }
     public static function logout()

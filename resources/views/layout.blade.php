@@ -3,17 +3,31 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CakeNodes</title>
-    <script type="module" crossorigin src="/assets/index.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index.css" />
-    <meta name="description" content="Experience top-tier Minecraft and Discord hosting with CakeNodes! Enjoy free hosting, powerful hardware, global regions, and 24/7 support. Create, host, build, and play your servers with us today." />
+    <title><?php env["APP_NAME"] ?></title>
+    <meta name="theme-color" content="#000000" />
+    <meta name="robots" content="<?php echo env["APP_ROBOTS"] ? "index, follow" : "noindex, nofollow"; ?>" />
+    <meta name="googlebot" content="<?php echo env["APP_ROBOTS"] ? "index, follow" : "noindex, nofollow"; ?>" />
+    <meta name="bingbot" content="<?php echo env["APP_ROBOTS"] ? "index, follow" : "noindex, nofollow"; ?>" />
+    <meta name="yandex" content="<?php echo env["APP_ROBOTS"] ? "index, follow" : "noindex, nofollow"; ?>" />
+    <meta name="referrer" content="no-referrer" />
+
+    <meta name="author" content="<?php echo env["APP_AUTHOR"]; ?>" />
+    <meta name="publisher" content="<?php echo env["APP_AUTHOR"]; ?>" />
+    <meta name="copyright" content="<?php echo env["APP_AUTHOR"]; ?>" />
+    <meta name="generator" content="<?php echo env["APP_NAME"]; ?>" />
+    <meta name="rating" content="<?php echo env["APP_RATING"]; ?>" />
+    <meta name="image" content="/favicon.png" />
+    <meta name="keywords" content="<?php echo "minecraft, discord, hosting, free, powerful, hardware, global, regions, support, create, host, build, play, servers"; ?>" />
+    <meta name="description" content="<?php echo "Experience top-tier Minecraft and Discord hosting with CakeNodes! Enjoy free hosting, powerful hardware, global regions, and 24/7 support. Create, host, build, and play your servers with us today."; ?>" />
     <style id=" __theme">
         <?php
         if (isset($_COOKIE['theme'])) {
             $theme = base64_decode($_COOKIE['theme']);
             echo ":root { $theme }";
+        } else {
+            echo file_get_contents(ROOT . '/resources/views/theme.css');
         }
         ?>
 
@@ -143,6 +157,12 @@
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
         }
     </style>
+    <script type="module">
+        <?php
+        require_once ROOT . '/public/assets/index.php';
+        ?>
+    </script>
+    <link rel="stylesheet" crossorigin href="/assets/index.css" />
 </head>
 
 <body>

@@ -13,6 +13,8 @@
 		"forcePush": "git push origin HEAD:main --force && git fetch && git pull"
 	},
 	"dependencies": {
+		"@fortawesome/free-solid-svg-icons": "^6.6.0",
+		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@types/node": "^22.5.0",
 		"axios": "^1.7.4",
 		"easy-peasy": "^6.0.5",
@@ -22,7 +24,8 @@
 		"react-dom": "^18.2.0",
 		"react-konva": "^18.2.10",
 		"react-router-dom": "^6.26.1",
-		"react-svg": "^16.1.34"
+		"react-svg": "^16.1.34",
+		"react-toastify": "^10.0.5"
 	},
 	"devDependencies": {
 		"@types/react": "^18.2.66",

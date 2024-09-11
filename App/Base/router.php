@@ -112,14 +112,21 @@ class Middleware
     public function group($callbackfunc)
     {
         foreach ($this->funcs as $func) {
+            // get arguments from function (Route::invokeByPrefix) and pass it to $callbackfunc
             try {
-                Router::invokeByPrefix($func, false);
+                $response = Router::invokeByPrefix($func, false);
+                if ($response['error']) {
+                    throw new Exception($response['error']);
+                }
+                if ($response) {
+                    $this->parsedVariables[] = $response;
+                }
             } catch (Exception $e) {
                 if ($this->inverted) call_user_func($callbackfunc, ...$this->parsedVariables);
                 return;
             }
         }
-        if (!$this->inverted) call_user_func($callbackfunc);
+        if (!$this->inverted) call_user_func($callbackfunc, ...$this->parsedVariables);
     }
 }
 
@@ -282,9 +289,9 @@ class Router
      * @param array $funcs An array of function prefixes to be used as middleware
      * @return Middleware
      */
-    public static function middleware($funcs)
+    public static function middleware($funcs, $parsedVariables = []): Middleware
     {
-        return new Middleware($funcs);
+        return new Middleware($funcs, $parsedVariables);
     }
 
     /**

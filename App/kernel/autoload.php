@@ -9,6 +9,10 @@ if (version_compare(phpversion(), '8.1.0', '<')) {
 if (!defined('ROOT')) {
     define('ROOT', __DIR__ . '/../../');
 }
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+
 error_reporting(E_ALL);
 header("Server: VoltPHP");
 header("X-Powered-By: VoltPHP");
@@ -28,32 +32,9 @@ require_once ROOT . '/App/Base/assets.php';
 require_once ROOT . '/App/Base/jwt.php';
 if (!file_exists(ROOT . "/.env")) {
     trigger_error("No.env file found. Creating empty... Please fill it.", E_WARNING);
-    $envFile = fopen(ROOT . "/.env", "w");
-    fwrite($envFile, '
-DB_HOST =
-DB_PORT =
-DB_DB =
-DB_USER =
-DB_PASSWORD =
-DB_UNSAFE =
-MAINTENANCE =
-');
-    fclose($envFile);
-    die();
 }
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-ini_set('error_log', ROOT . '/storage/logs/error.log');
-ini_set('log_errors', 1);
-ini_set('error_reporting', E_ALL);
 $env = parse_ini_file(ROOT . '/.env');
-if ($env["MAINTENANCE"]) {
-    // show everyerror and warning
-    require_once ROOT . "/resources/views/errors/503.php";
-    return;
-}
 function runTroughtFolder($dir)
 {
     $files = scandir($dir);
@@ -73,15 +54,15 @@ define('db', new PDOInstance(file_get_contents(ROOT . "/App/Schemas/db.sql"), ["
 
 define('env', $env);
 // get every error and warning and save it into db
-set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-    db->unsafeQuery("INSERT INTO errors (message, file, line) VALUES ('" . $errstr . "', '" . $errfile . "', '" . $errline . "')");
-    return false;
-});
-// get every exception and save it into db and still return same exception
-set_exception_handler(function ($e) {
-    db->unsafeQuery("INSERT INTO errors (message, stack, file, line) VALUES ('" . $e->getMessage() . "', '" . $e->getTraceAsString() . "', '" . $e->getFile() . "', '" . $e->getLine() . "')");
-    return $e;
-});
+// set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+//     db->unsafeQuery("INSERT INTO errors (message, file, line) VALUES ('" . $errstr . "', '" . $errfile . "', '" . $errline . "')");
+//     return false;
+// });
+// // get every exception and save it into db and still return same exception
+// set_exception_handler(function ($e) {
+//     db->unsafeQuery("INSERT INTO errors (message, stack, file, line) VALUES ('" . $e->getMessage() . "', '" . $e->getTraceAsString() . "', '" . $e->getFile() . "', '" . $e->getLine() . "')");
+//     return $e;
+// });
 $logmode = true;
 // get every data php sent to client and save it into db
 register_shutdown_function(function () use ($logmode) {

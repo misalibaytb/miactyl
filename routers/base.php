@@ -1,13 +1,16 @@
 <?php
 
+use App\Base\JsParser;
 use App\Http\Controllers\Auth\AuthController;
 
+
 header('Content-Type: application/json');
-Router::get('/api/user', AuthController::class, 'index');
+Router::get('/api/user', AuthController::class, 'index')->name('auth.getUser');
 Router::post('/api/login', AuthController::class, 'login');
 Router::get('/api/login', AuthController::class, 'generateOauth2Url');
-Router::get('/api/logout', AuthController::class, 'logout');
-
+Router::middleware(['auth.getUser'])->group(function ($user) {
+    Router::get('/api/logout', AuthController::class, 'logout');
+});
 Router::fallback('/', function ($path) {
     header('Content-Type: text/html');
     try {

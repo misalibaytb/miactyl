@@ -1,0 +1,88 @@
+.nav {
+	height: 100%;
+	min-height: 80px;
+	max-height: 80px;
+	width: 100%;
+	background-color: var(--navigation-color);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.sidebar-switch {
+	width: 50px;
+	height: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	font-size: 25px;
+}
+.sidebar-avatar {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	margin-right: 10px;
+	cursor: pointer;
+}
+.sidebar-avatar img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
+.sidebar-avatar span {
+	font-size: 15px;
+	margin: 0;
+	margin-left: 10px;
+}
+.sidebar-avatar .caret {
+	margin-left: 10px;
+	background-color: #7289da33;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.5s;
+	z-index: 1;
+}
+.sidebar-avatar .caret svg {
+	color: white;
+	width: 20px;
+	height: 20px;
+}
+.sidebar-avatar .dropdown {
+	position: relative;
+	display: inline-block;
+}
+.sidebar-avatar .dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #232333;
+	min-width: 160px;
+	left: -160px;
+	top: 35px;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	z-index: 1;
+	padding: 5px;
+	border-radius: 5px;
+}
+.sidebar-avatar .dropdown-content a {
+	color: white;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+	cursor: pointer;
+}
+.sidebar-avatar .dropdown-content a:hover {
+	background-color: #313144c9;
+}
+.sidebar-avatar .dropdown[data-active] .dropdown-content {
+	display: block;
+}
+
+/* if dropdown is data-active then rotate .caret 180deg */
+.sidebar-avatar .dropdown[data-active] .caret {
+	transform: rotate(180deg);
+}

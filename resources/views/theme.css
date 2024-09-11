@@ -1,12 +1,39 @@
 :root {
 	/* Barvy */
-	--background-color: #111319;
+	/* --background-color: #111319; */
+	--background-color: linear-gradient(to bottom right, #1e1e2f, #111319);
 	--primary-color: #0090e7;
+	--primary-color-hover: #007bff;
 	--secondary-color: #f8f9fa;
 	--text-color: #f8f9fa;
-	--sideanavbar-color: #191c24;
+	--subbackground-color: #1e1e2f;
+	--navigation-color: #212530;
 	--heading-color: #f8f9fa;
 	--border-color: #343a40;
+	/* Typografie */
+	--font-family: 'Roboto', sans-serif;
+	--font-size-base: 16px;
+	--font-size-large: 24px;
+	--font-size-larger: 28px;
+	--font-size-small: 12px;
+	--line-height: normal;
+
+	/* Rozměry */
+	--padding-base: 16px;
+	--margin-base: 16px;
+	--border-radius: 12px;
+	--border-radius-small: 8px;
+
+	/* Stíny */
+	--box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 30px 0px;
+
+	/* Z-index */
+	--z-index-header: 1000;
+	--z-index-modal: 1050;
+	--z-index-dropdown: 1100;
+
+	/* Rychlost animací */
+	--transition-speed: 0.3s;
 }
 
 /* available variables
